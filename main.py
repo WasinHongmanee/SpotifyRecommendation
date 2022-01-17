@@ -10,7 +10,8 @@ import csv
 
 # long_term (calculated from several years of data and including all new data as it becomes available), medium_term (approximately last 6 months), short_term (approximately last 4 weeks
 # The key the track is in. Integers map to pitches using standard Pitch Class notation. E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on. If no key was detected, the value is -1. [-1,11]
-
+# The popularity of a track is a value between 0 and 100, with 100 being the most popular.The popularity is calculated by algorithm and is based, in the most part,
+# on the total number of plays the track has had and how recent those plays are.
 def GetTracks(playlist: str) -> list:
     spotifyObject = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
     offset = 0
@@ -37,7 +38,6 @@ def GetFeatures(songIDs: list) -> dict:
     for i in songIDs:
         artists = []
         track = sp.track(i)
-        # pprint(track)
         for artist in track[
             'artists']:  # make a list of artists names and convert them into one string separated by a comma
             artists.append(artist['name'])
@@ -47,6 +47,7 @@ def GetFeatures(songIDs: list) -> dict:
         tempdict = {'name': track['name']}
         tempdict.update({'artist': artists})
         tempdict.update({'release_date': track['album']['release_date']})
+        tempdict.update({'popularity': track['popularity']})
         tempdict.update(features[0])  # eg acousticness, danceability
         songFeatures.append(tempdict)
         # songfeatures.append({'name': track['name'], 'artist': track['artists'][0]['name']}, features[0])
@@ -58,7 +59,7 @@ def GetFeatures(songIDs: list) -> dict:
 def ExportToCSV(features: dict):
     column_names = ['acousticness', 'analysis_url', 'artist', 'danceability', 'duration_ms', 'energy', 'id',
                     'instrumentalness',
-                    'key', 'liveness', 'loudness', 'mode', 'name', 'release_date', 'speechiness', 'tempo',
+                    'key', 'liveness', 'loudness', 'mode', 'name', 'release_date', 'popularity', 'speechiness', 'tempo',
                     'time_signature',
                     'track_href',
                     'type', 'uri', 'valence']
@@ -74,4 +75,4 @@ def ExportToCSV(features: dict):
 if __name__ == '__main__':
     Tracks = GetTracks('https://open.spotify.com/playlist/1Qr4RR0Ys2dgu59UFTMUq9?si=ae9de72050f542ca')
     features = GetFeatures(Tracks)
-    pprint(features)
+    ExportToCSV(features)
