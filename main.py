@@ -37,15 +37,18 @@ def GetFeatures(songIDs: list) -> dict:
     songFeatures = []
     for i in songIDs:
         artists = []
+        artistlinks = []
         track = sp.track(i)
-        for artist in track[
-            'artists']:  # make a list of artists names and convert them into one string separated by a comma
-            artists.append(artist['name'])
 
-        artists = ', '.join([str(x) for x in artists])
+        for artist in track['artists']:  # make a list of artists names and convert them into one string separated by a comma
+            artistlinks.append(artist['external_urls']['spotify'])
+            artists.append(artist['name'])
+        artists = ' | '.join([str(x) for x in artists])
+        artistlinks = ' | '.join([str(x) for x in artistlinks])
         features = sp.audio_features(i)
         tempdict = {'name': track['name']}
         tempdict.update({'artist': artists})
+        tempdict.update({'artist_links' : artistlinks})
         tempdict.update({'release_date': track['album']['release_date']})
         tempdict.update({'popularity': track['popularity']})
         tempdict.update(features[0])  # eg acousticness, danceability
@@ -57,7 +60,7 @@ def GetFeatures(songIDs: list) -> dict:
 
 
 def ExportToCSV(features: dict):
-    column_names = ['acousticness', 'analysis_url', 'artist', 'danceability', 'duration_ms', 'energy', 'id',
+    column_names = ['acousticness', 'analysis_url', 'artist', 'artist_links', 'danceability', 'duration_ms', 'energy', 'id',
                     'instrumentalness',
                     'key', 'liveness', 'loudness', 'mode', 'name', 'release_date', 'popularity', 'speechiness', 'tempo',
                     'time_signature',
@@ -76,3 +79,4 @@ if __name__ == '__main__':
     Tracks = GetTracks('https://open.spotify.com/playlist/1Qr4RR0Ys2dgu59UFTMUq9?si=ae9de72050f542ca')
     features = GetFeatures(Tracks)
     ExportToCSV(features)
+
