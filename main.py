@@ -7,12 +7,6 @@ from spotipy.oauth2 import SpotifyOAuth
 from pprint import pprint
 import csv
 
-
-# long_term (calculated from several years of data and including all new data as it becomes available), medium_term (approximately last 6 months), short_term (approximately last 4 weeks
-# The key the track is in. Integers map to pitches using standard Pitch Class notation. E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on. If no key was detected, the value is -1. [-1,11]
-# The popularity of a track is a value between 0 and 100, with 100 being the most popular.The popularity is calculated by algorithm and is based, in the most part,
-# on the total number of plays the track has had and how recent those plays are.
-
 def GetTracks(playlist: str) -> list:
     spotifyObject = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
     offset = 0
